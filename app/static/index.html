@@ -1,1304 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eHealth Puzzle Game</title>
-    <style>
-     body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: url('static/images/background1.jpg') no-repeat center center fixed;
-    background-size: cover;
-    transition: background 1s ease-in-out; /* Smooth transition for dynamic changes */
-}
-
-
-        #game-area {
-            margin-top: 20px;
-        }
-        img {
-            border: 2px solid #ccc;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        #metadata {
-            font-size: 18px;
-            margin-top: 10px;
-        }
-        #countdown {
-            font-size: 18px;
-            color: #ff5722;
-            margin-top: 10px;
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .modal-content h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        .modal-content button {
-            padding: 10px 20px;
-            background: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .modal-content button:hover {
-            background: #45a049;
-        }
-        
-/* Player ID Section Styling */
-#player-id-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 30vh; /* Reduce height to make it smaller */
-    background: rgba(255, 255, 255, 0.8); /* Add transparency */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 20px;
-    max-width: 700px;
-    margin: auto;
-    text-align: center;
-    backdrop-filter: blur(20px); /* Add blur effect for a more modern look */
-}
-
-#player-id-area h2 {
-    font-size: 24px; /* Reduce font size to match smaller height */
-    color: #01579b;
-    margin-bottom: 15px; /* Adjust margin */
-}
-
-#player-id-area label {
-    font-size: 14px; /* Reduce font size */
-    color: #333;
-    margin-bottom: 8px; /* Adjust margin */
-}
-
-#player-id-area input {
-    padding: 10px; /* Adjust padding */
-    font-size: 14px; /* Reduce font size */
-    width: 90%; /* Slightly reduce width */
-    margin-bottom: 15px; /* Adjust margin */
-    margin-top: 15px; /* Adjust margin */
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: border 0.3s ease;
-}
-
-#player-id-area input:focus {
-    border-color: #0288d1;
-    outline: none;
-    box-shadow: inset 0 2px 5px rgba(0, 136, 209, 0.3);
-}
-
-#player-id-area button {
-    padding: 10px 20px; /* Reduce padding for smaller height */
-    background: #090233;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    font-size: 14px; /* Reduce font size */
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-#player-id-area button:hover {
-    background: #e7b903;
-}
-
-
-/* Game Area Styling */
-#game-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center children horizontally */
-    justify-content: center; /* Center children vertically */
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 700px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 1.0), rgba(224, 247, 250, 1.0));
-
-     /* min-height: 30vh;Ensure the game area fills the viewport vertically */
-}
-
-
-/* Styling for the puzzle image */
-#puzzle-image {  
-    display: block; /* Center the image horizontally */
-    margin: 0 auto; /* Center the image horizontally */
-    width: 90%; /* Make the image occupy 90% of the container width */
-    max-width: 512px; /* Limit the maximum size */
-    height: auto; /* Maintain aspect ratio */
-    object-fit: contain; /* Preserve aspect ratio and prevent distortion */
-     /* Optional: Add a border for aesthetics */
-    border-radius: 10px; /* Optional: Rounded corners */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional: Shadow for a polished look */
-    border: 2px solid #a46500;
-}
-
-
-/* Metadata text styling */
-#metadata {
-    font-size: 18px;
-    color: #37474f;
-    margin-bottom: 10px;
-}
-
-/* Countdown text styling */
-#countdown {
-    font-size: 20px;
-    color: #d84315;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-/* Validate Button Styling */
-#validate-button {
-    display: block; /* Ensure the button is visible */
-    justify-content: center;
-    padding: 12px 25px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffffff;
-    background: #090233;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    transition: background 0.3s ease, transform 0.2s ease;
-  /* Match the width of the puzzle image */
-    text-align: center; /* Ensure the button's text is centered */
-    margin-left: 40%;
-    margin-right: 30%;
-}
-
-#validate-button:hover {
-    background: #e7b903;
-    transform: translateY(-2px);
-}
-
-#validate-button:active {
-    background: #e7b903;
-    transform: translateY(0);
-}
-/* Questions Area Styling */
-#questions-area {
-    display: none; /* Initially hidden */
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 700px;
-    border-radius: 10px;
-    background: linear-gradient(to bottom, #f0f4c3, #ffffff);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-/* Header for the questions section */
-#questions-area h2 {
-    font-size: 24px;
-    color: #37474f;
-    margin-bottom: 20px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Questions container styling */
-#questions-container {
-    text-align: left;
-    margin-bottom: 20px;
-}
-
-/* Individual question styling */
-#questions-container p {
-    font-size: 18px;
-    font-weight: bold;
-    color: #37474f;
-    margin-bottom: 10px;
-}
-
-/* Option styling */
-#questions-container label {
-    display: block;
-    margin: 8px 0;
-    font-size: 16px;
-    color: #455a64;
-    cursor: pointer;
-    transition: color 0.3s ease, background 0.3s ease;
-}
-
-/* Hover and active state for options */
-#questions-container label:hover {
-    color: #2e7d32;
-    background: rgba(46, 125, 50, 0.1);
-    padding: 4px;
-    border-radius: 5px;
-}
-
-/* Styling for submit button */
-#submit-answers-button {
-    padding: 12px 25px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffffff;
-    background:  #090233;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    transition: background 0.3s ease, transform 0.2s ease;
-    justify-content: center;
-    margin-left: 40%;
-    margin-right: 30%;
-}
-
-#submit-answers-button:hover {
-    background: #e7b903;
-    transform: translateY(-2px);
-}
-
-#submit-answers-button:active {
-    background: #efb909;
-    transform: translateY(0);
-}
-/* Result Container Styling */
-#result-container {
-    display: none; /* Initially hidden */
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 700px;
-    border-radius: 10px;
-    background: linear-gradient(to right, #e3f2fd, #ffffff);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-/* Result Header Styling */
-#result-container h2 {
-    font-size: 28px;
-    color: #1e88e5;
-    margin-bottom: 15px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Detailed Feedback Styling */
-#result-container div {
-    text-align: left;
-    font-size: 16px;
-    color: #37474f;
-    background: #f1f8e9;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-}
-
-#result-container div:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Feedback Correct/Incorrect Icons */
-.correct-feedback {
-    color: #388e3c;
-    font-weight: bold;
-}
-
-.incorrect-feedback {
-    color: #d32f2f;
-    font-weight: bold;
-}
-
-/* Next Level Button */
-#result-container button {
-    padding: 12px 25px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffffff;
-    background:  #090233;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    transition: background 0.3s ease, transform 0.2s ease;
-    justify-content: center;
-}
-
-#result-container button:hover {
-    background: #efb909;
-    transform: translateY(-2px);
-}
-
-#result-container button:active {
-    background: #efb909;
-    transform: translateY(0);
-}
-
-/* Fade-In Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-/* Header Styling */
-#app-header {
-    background: rgba(255, 255, 255, 0.000001); /* Increased transparency */
-    color: rgb(13, 13, 13);
-    padding: 10px 10px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Softer shadow */
-    border-bottom: 1px solid rgba(207, 204, 207, 0.3); /* More transparent border */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
-    backdrop-filter: blur(5px); /* Softer blur */
-}
-
-.header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    padding: 0 20px;
-}
-
-.header-text {
-    text-align: center;
-    flex-grow: 1;
-}
-
-#app-header h1 {
-    margin: 0;
-    font-size: 22px; /* Adjusted font size */
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-}
-
-#app-header p {
-    margin: 5px 0 0;
-    font-size: 14px; /* Slightly reduced font size */
-    color: rgba(0, 0, 0, 0.7); /* Softer text color */
-}
-
-.header-logo {
-    width: 70px; /* Adjust logo size */
-    height: auto;
-}
-
-#logo-left {
-    margin-right: 15px; /* Adjust spacing */
-}
-
-#logo-right {
-    margin-left: 15px; /* Adjust spacing */
-}
-
-
-/* Footer Styling */
-#app-footer {
-    background: #ebefeb;
-    color: white;
-    padding: 10px 0;
-    text-align: center;
-    border-top: 2px solid #388e3c;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-}
-
-#app-footer p {
-    margin: 5px 0;
-    font-size: 14px;
-}
-
-#app-footer a {
-    color: #ffffff;
-    text-decoration: underline;
-}
-
-#app-footer a:hover {
-    color: #c8e6c9;
-}
-
-#player-id {
-    border: 1px solid #ccc;
-    transition: border-color 0.3s;
-}
-
-#player-id:focus {
-    border-color: #0288d1;
-    outline: none;
-}
-
-#error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-    display: none;
-}
-/* Winner selction*/
-#winner-section button,
-#manual-select-winner {
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
-
-#winner-section button:hover {
-    background-color: #45a049;
-}
-
-#manual-select-winner:hover {
-    background-color: #d32f2f;
-}
-
-#winner-message {
-    font-size: 18px;
-    font-weight: bold;
-    }
-</style>
-
-
-
-
-
-
-
-    </style>
+    <title>Puzzle Game</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- Header -->
-<header id="app-header">
-    <div class="header-content">
-        <img src="static/images/logo-left.png" alt="Left Logo" class="header-logo" id="logo-left">
-        <div class="header-text">
-            <h1>eHealth Puzzle Game</h1>
-            <p>Challenge your brain and learn about health!</p>
+    <header id="app-header">
+        <div class="header-content">
+            <img src="static/images/logos/logo-left.png" alt="Logo" class="header-logo">
+            <div class="header-text">
+                <h1>Puzzle Game</h1>
+                <p>Challenge your brain and learn about health!</p>
+            </div>
+            <img src="static/images/logos/logo-right.png" alt="Logo" class="header-logo">
         </div>
-        <img src="static/images/logo-right.png" alt="Right Logo" class="header-logo" id="logo-right">
-    </div>
-</header>  
- <!-- Player ID Input Section -->
- <div id="player-id-area">
-    <h2>Welcome to the eHealth Puzzle Game!</h2>
-    <label for="player-id">Enter Your Name:</label>
-    <input type="text" id="player-id" placeholder="Your Name" required>
-    <!-- Error Message -->
-    <p id="error-message" style="display: none; color: red; font-size: 14px;"></p>
-    <button onclick="startGame()">Start Game</button>
-</div>
+    </header>
 
-
-
-    
-    <div id="game-area">
-        <img id="puzzle-image" src="" alt="Medical Image" style="display: none; max-width: 100%; height: auto;">
-        <p id="metadata"></p>
-        <p id="countdown" style="display: none;"></p>
-        <button id="validate-button" onclick="validatePuzzle()" style="display: none;">Validate Puzzle</button>
+    <div id="timer-container">
+        Time: <span id="timer">00:00</span>
     </div>
 
-    <!-- Success Modal -->
-    <div id="success-modal" class="modal" style="display: none;">
+    <div id="countdown-overlay">3</div>
+
+    <main>
+        <!-- Player Entry -->
+        <section id="player-id-area" class="glass-panel">
+            <h2>Welcome!</h2>
+            <p style="color:#666; margin-bottom:20px;">Enter your name to begin.</p>
+            <input type="text" id="player-id" placeholder="Your Name" required
+                style="width: 80%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #ccc;">
+            <p id="error-message" class="error-msg hidden"></p>
+            <button onclick="startGame()" class="btn-primary">Start Game</button>
+        </section>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="glass-panel hidden">
+            <h3 style="padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); margin: 0;">Learning Hub</h3>
+            <div id="modality-menu">
+                <!-- Dropdowns will be injected here -->
+                <div class="modality-menu">
+                    <button class="modality-toggle" onclick="toggleModality('mri')">MRI <span>▼</span></button>
+                    <div id="mri-content" class="modality-content">
+                        Magnetic Resonance Imaging (MRI) uses strong magnetic fields and radio waves to generate images
+                        of the organs in the body. It does not use ionizing radiation.
+                    </div>
+                </div>
+                <div class="modality-menu">
+                    <button class="modality-toggle" onclick="toggleModality('ct')">CT Scan <span>▼</span></button>
+                    <div id="ct-content" class="modality-content">
+                        Computed Tomography (CT) combines a series of X-ray images taken from different angles around
+                        your body and uses computer processing to create cross-sectional images (slices).
+                    </div>
+                </div>
+                <div class="modality-menu">
+                    <button class="modality-toggle" onclick="toggleModality('xray')">X-Ray <span>▼</span></button>
+                    <div id="xray-content" class="modality-content">
+                        X-rays are a form of electromagnetic radiation. They create images of the inside of your body.
+                        The images show the parts of your body in different shades of black and white.
+                    </div>
+                </div>
+                <div class="modality-menu">
+                    <button class="modality-toggle" onclick="toggleModality('ultrasound')">Ultrasound
+                        <span>▼</span></button>
+                    <div id="ultrasound-content" class="modality-content">
+                        Ultrasound imaging uses high-frequency sound waves to view inside the body. Because ultrasound
+                        images are captured in real-time, they can show the structure and movement of the body's
+                        internal organs.
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 20px; margin-top: auto;">
+                <button onclick="goHome()" class="btn-secondary" style="width: 100%; margin-bottom: 10px;">Home</button>
+                <button onclick="restartLevel()" class="btn-secondary" style="width: 100%;">Restart Level</button>
+            </div>
+        </aside>
+
+        <!-- Game Area (Split View) -->
+        <section id="game-split-view" class="hidden">
+            <!-- Left: Puzzle -->
+            <div id="puzzle-panel" class="glass-panel">
+                <img id="puzzle-image" src="" alt="Puzzle" style="display:none;">
+                <p id="metadata"></p>
+                <div style="margin-top: 20px;">
+                    <!-- Validate button was requested, but user also wants questions "jointly". 
+                          Usually validation enables questions, but user wants them side by side.
+                          I'll keep validation to "lock in" the puzzle, but show questions immediately?
+                          Or maybe validation is just to check if puzzle is done. 
+                          I will keep validation check. -->
+                    <button id="validate-button" onclick="validatePuzzle()" class="btn-primary hidden">
+                        Validate Puzzle
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Quiz -->
+            <div id="quiz-panel" class="glass-panel hidden">
+                <h3>Quiz</h3>
+                <div id="questions-container">
+                    <p style="color: #777;">Loading questions...</p>
+                </div>
+                <button id="submit-quiz-btn" onclick="submitAnswers()" class="btn-primary"
+                    style="margin-top: 20px; width: 100%;">Submit Answers</button>
+                <div id="quiz-feedback" class="hidden" style="margin-top: 20px;"></div>
+            </div>
+        </section>
+
+        <!-- Results (Overlay or replace main content? For split view, replace main content area or show modal) -->
+        <section id="result-container" class="glass-panel hidden"
+            style="margin: auto; max-width: 600px; padding: 40px; text-align: center;">
+            <!-- Dynamic content -->
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <div id="success-modal" class="modal hidden">
         <div class="modal-content">
-            <h2>🎉 Congratulations! 🎉</h2>
-            <p>You solved the puzzle!</p>
+            <h2 style="color: #2e7d32;">🎉 Puzzle Solved!</h2>
+            <p>Great job! Now finish the quiz if you haven't already.</p>
+            <button onclick="closeModal('success-modal')" class="btn-primary"
+                style="margin-top: 20px;">Continue</button>
         </div>
     </div>
 
-    <!-- Keep Trying Modal -->
-    <div id="try-again-modal" class="modal" style="display: none;">
+    <div id="try-again-modal" class="modal hidden">
         <div class="modal-content">
-            <h2>🙁 Not Quite Yet! 🙁</h2>
-            <p>Keep trying to solve the puzzle.</p>
-            <button onclick="closeModal('try-again-modal')">OK</button>
+            <h2 style="color: #f57c00;">Not quite...</h2>
+            <p>Keep trying!</p>
+            <button onclick="closeModal('try-again-modal')" class="btn-primary" style="margin-top:20px;">OK</button>
         </div>
     </div>
 
-    <!-- Questions Section -->
-    <div id="questions-area" style="display: none; margin-top: 20px;">
-        <h2>Multiple Choice Exam</h2>
-        <div id="questions-container"></div>
-        <button id="submit-answers-button" style="display: none;" onclick="submitAnswers()">Submit Answers</button>
+    <div id="timeout-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 style="color: #c0392b;">Time's Up!</h2>
+            <p>You ran out of time.</p>
+            <button onclick="restartLevel()" class="btn-primary" style="margin-top: 20px;">Restart Level</button>
+        </div>
     </div>
 
-    <!-- Result -->
-    <div id="result-container" style="display: none; margin-top: 20px;">
-        <!-- Result and Next Level button will be dynamically added -->
-    </div>
+    <!-- No footer needed for full screen app, simplified -->
 
-<!-- Winner Selection Section -->
-<div id="winner-section" style="text-align: center; margin-top: 20px; display: none;">
-    <!-- Button to show the winner -->
-    <button id="show-winner-button" onclick="showWinner()" style="padding: 10px 20px; margin-bottom: 10px; background-color: #4caf50; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
-        Show Winner
-    </button>
-    <!-- Winner message -->
-    <h2 id="winner-message" style="color: #333; margin-top: 20px;"></h2>
-</div>
-
-<!-- Manual Winner Selection -->
-<div id="manual-winner-section" style="text-align: center; margin-top: 20px; display: none;">
-    <button id="manual-select-winner" onclick="manualSelectWinner()" style="padding: 10px 20px; background-color: #f44336; color: #fff; border: none; border-radius: 5px; cursor: pointer;">
-        Select Winner Now
-    </button>
-</div>
-
-
-
-
-<!-- Footer -->
-
-    
-
-    <script>
-
-
-
-// Dynamic Background Setup
-const backgrounds = [
-    'static/images/background1.jpg',
-    'static/images/background2.jpg',
-    'static/images/background3.jpg',
-    'static/images/background4.jpeg',
-    'static/images/background5.jpg',
-    'static/images/background6.jpg',
-    'static/images/background7.jpg',
-    'static/images/background9.jpg',
-    'static/images/background10.jpg',
-    'static/images/background11.jpg',
-    'static/images/background12.jpg'
-
-];
-let currentIndex = 0; // Start with the first image
-
-function changeBackground() {
-    currentIndex = (currentIndex + 1) % backgrounds.length; // Cycle through images
-    console.log(`Changing background to: ${backgrounds[currentIndex]} (Index: ${currentIndex})`);
-    document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
-}
-// Start dynamic background changes when the page loads
-document.addEventListener("DOMContentLoaded", () => {
-    document.body.style.backgroundImage = `url('${backgrounds[0]}')`; // Set initial background
-    setInterval(changeBackground, 10000); // Change background every 10 seconds
-});
-
-
-//Game Initialization
-//start game
-function startGame() {
-    const playerId = document.getElementById("player-id").value.trim();
-    const errorMessage = document.getElementById("error-message");
-
-    // Clear any previous error messages
-    errorMessage.style.display = "none";
-
-    // Check if the player ID is empty
-    if (!playerId) {
-        errorMessage.style.display = "block";
-        errorMessage.textContent = "Please enter your name to start the game.";
-        return;
-    }
-
-    // Check if the player ID is at least 3 characters long
-    if (playerId.length < 3) {
-        errorMessage.style.display = "block";
-        errorMessage.textContent = "Name must be at least 3 characters long.";
-        return;
-    }
-
-    // Check if the player ID contains only letters
-    const usernameRegex = /^[a-zA-Z ]+$/;
-    if (!usernameRegex.test(playerId)) {
-        errorMessage.style.display = "block";
-        errorMessage.textContent = "Name must contain only letters (a-z, A-Z).";
-        return;
-    }
-
-    // Store the player ID globally for tracking
-    localStorage.setItem("playerId", playerId);
-    localStorage.setItem("currentLevel", "level_1"); // Set current level to level_1
-
-
-    // Save the player ID to the backend
-    fetch("/register", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({ username: playerId }), // Send username as "username"
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        if (data.error) {
-            // Show error if backend validation fails
-            errorMessage.style.display = "block";
-            errorMessage.textContent = data.error;
-        } else {
-            // Log success (optional)
-            console.log("Player registered successfully:", data);
-
-            // Hide the player ID input area and show the game area
-            document.getElementById("player-id-area").style.display = "none";
-            document.getElementById("game-area").style.display = "block";
-
-            // Start loading the first image
-            loadImage();
-        }
-    })
-    .catch((error) => {
-        // Handle network or server errors
-        console.error("Error registering player:", error);
-        errorMessage.style.display = "block";
-        errorMessage.textContent = "Failed to connect to the server. Please try again later.";
-    });
-}
-
-
-//Image Handling
-async function loadImage() {
-    try {
-        const response = await fetch('/image');
-        if (response.ok) {
-            const data = await response.json();
-            
-            // Display the image and metadata
-            document.getElementById('puzzle-image').src = data.image_url;
-            document.getElementById('metadata').innerText = ''; // Add metadata here if needed
-            document.getElementById('puzzle-image').style.display = 'block';
-
-            // Start a 10-second countdown before shuffling
-            startCountdown(6, async () => {
-                await shuffleImage();
-                showValidateButton();
-            });
-        } else {
-            console.error("Failed to fetch image:", response.statusText);
-            alert("Failed to load image. Please try again.");
-        }
-    } catch (error) {
-        console.error("Error while loading image:", error);
-        alert("An error occurred while loading the image.");
-    }
-}
-
-function startCountdown(seconds, callback) {
-            const countdownElement = document.getElementById('countdown');
-            countdownElement.style.display = 'block';
-
-            function updateCountdown() {
-                countdownElement.innerText = `Shuffling in: ${seconds} seconds`;
-                if (seconds > 0) {
-                    seconds--;
-                    setTimeout(updateCountdown, 1000);
-                } else {
-                    countdownElement.style.display = 'none';
-                    callback(); // Shuffle the image
-                }
-            }
-
-            updateCountdown();
-        }
-        
-async function shuffleImage() {
-    const response = await fetch('/shuffle', { method: 'POST' });
-    if (response.ok) {
-        const data = await response.json();
-        document.getElementById('puzzle-image').src = data.shuffled_image_url;
-    } else {
-        alert("Failed to shuffle image!");
-    }
-}   
-//Puzzle Interaction
-// Track selected grid indices
-let selectedGrids = []; 
-
-function handleImageClick(event) {
-    const imageElement = document.getElementById("puzzle-image");
-    const rect = imageElement.getBoundingClientRect(); // Get the image's position and size
-    const x = event.clientX - rect.left; // X-coordinate of the click
-    const y = event.clientY - rect.top;  // Y-coordinate of the click
-
-    // Dynamically determine the grid size for the current level
-    const gridSize = getCurrentGridSize();
-    const patchSize = rect.width / gridSize; // Calculate patch size dynamically
-
-    // Calculate row and column based on click position
-    const col = Math.floor(x / patchSize);
-    const row = Math.floor(y / patchSize);
-
-    // Calculate the patch index
-    const index = row * gridSize + col;
-
-    selectedGrids.push(index);
-    console.log(`Selected grid index: ${index}`);
-    
-
-    // Perform swap if two patches are selected
-    if (selectedGrids.length === 2) {
-        if (selectedGrids[0] !== selectedGrids[1]) {
-            swapGrids(selectedGrids[0], selectedGrids[1]);
-        } else {
-            console.log("Cannot swap the same patch.");
-        }
-        selectedGrids = []; // Reset for the next swap
-    }
-}
-
-async function swapGrids(index1, index2) {
-    const formData = new FormData();
-    formData.append("index1", index1);
-    formData.append("index2", index2);
-
-    try {
-        const response = await fetch("/swap", {
-            method: "POST",
-            body: formData,
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            const puzzleImage = document.getElementById("puzzle-image");
-            puzzleImage.src = data.updated_image_url + "?t=" + new Date().getTime(); // Cache busting
-        } else {
-            alert("Failed to swap grids!");
-        }
-    } catch (error) {
-        console.error("Error swapping grids:", error);
-        alert("An error occurred while swapping grids.");
-    }
-}
-
-// Utility function to determine the current grid size based on the level
-function getCurrentGridSize() {
-    // Retrieve the current level from local storage or other logic
-    const currentLevel = localStorage.getItem("currentLevel") || "level_1";
-
-    // Dynamically set the grid size: Level 1 uses 2x2, others use 4x4
-    if (currentLevel === "level_1") {
-        return 4; // 2x2 grid for Level 1
-    } else {
-        return 4; // 4x4 grid for Levels 2-4
-    }
-}
-
-////Puzzle Validation
-async function validatePuzzle() {
-    try {
-        console.log("Validating puzzle..."); // Debugging
-        const response = await fetch('/validate', { method: 'POST' });
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Validation response:", data); // Debugging
-
-            if (data.is_correct) {
-                console.log("Puzzle is correct!"); // Debugging
-               // Show the success modal, then fetch and show questions after a short delay
-               showModal('success-modal');
-                setTimeout(() => {
-                    closeModal('success-modal');
-                    fetchAndShowQuestions(); // Load questions after closing the modal
-                }, 2000); // Adjust delay as needed
-            } else {
-                console.log("Puzzle is incorrect."); // Debugging
-                showModal('try-again-modal');
-            }
-        } else {
-            console.error("Validation failed with status:", response.status); // Debugging
-            alert("Failed to validate the puzzle!");
-        }
-    } catch (error) {
-        console.error("Error during puzzle validation:", error);
-        alert("An error occurred while validating the puzzle.");
-    }
-}
-
-function showModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.style.display = 'flex';
-}
-function closeModal(modalId, callback) {
-    const modal = document.getElementById(modalId);
-    modal.style.display = 'none';
-    if (callback) callback(); // Optional callback after modal closes
-}
-
-/// Fetch and Show Questions
-async function fetchAndShowQuestions() {
-    try {
-        const response = await fetch('/questions');
-        if (response.ok) {
-            const data = await response.json();
-            const questionsContainer = document.getElementById('questions-container');
-            questionsContainer.innerHTML = ''; // Clear existing questions
-
-            data.questions.forEach((question, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.innerHTML = `
-                    <p><strong>${question.question}</strong></p>
-                    ${question.options.map(
-                        (option) => `
-                        <label>
-                            <input type="radio" name="question-${index}" value="${option}">
-                            ${option}
-                        </label><br>`
-                    ).join('')}
-                `;
-                questionsContainer.appendChild(questionDiv);
-            });
-
-            // Show the questions area and submit button
-            document.getElementById('questions-area').style.display = 'block';
-            document.getElementById('submit-answers-button').style.display = 'block';
-        } else {
-            alert("Failed to load questions!");
-        }
-    } catch (error) {
-        console.error("Error fetching questions:", error);
-        alert("An error occurred while loading questions.");
-    }
-}
-///Submit Answers
-async function submitAnswers() {
-    const questionsContainer = document.getElementById("questions-container");
-    const questionDivs = questionsContainer.querySelectorAll("div");
-
-    let playerAnswers = []; // Array to hold the player's answers
-
-    questionDivs.forEach((div, index) => {
-        const selectedOption = div.querySelector(`input[name="question-${index}"]:checked`);
-        playerAnswers.push({
-            index: index, // Question index
-            answer: selectedOption ? selectedOption.value : null,
-        });
-    });
-
-    console.log("Submitting answers:", playerAnswers); // Debugging
-
-    // Send answers to the backend for validation
-    try {
-        const response = await fetch('/check_answers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ answers: playerAnswers })
-        });
-
-        if (response.ok) {
-            const result = await response.json();
-            console.log("Validation results:", result); // Debugging
-
-            const playerId = localStorage.getItem('playerId'); // Retrieve player ID
-            const currentLevel = localStorage.getItem('currentLevel'); // Retrieve current level
-
-            if (playerId && currentLevel) {
-                console.log(`Saving score for level: ${currentLevel}`); // Debug log
-                await savePlayerScore(currentLevel, result.score); // Pass correct level dynamically
-            } else {
-                console.error("Missing playerId or currentLevel. Skipping score save.");
-            }
-
-            // Hide the questions section
-            document.getElementById('questions-area').style.display = 'none';
-
-            // Display the results
-            showResults(result);
-        } else {
-            alert("Failed to check answers!");
-        }
-    } catch (error) {
-        console.error("Error checking answers:", error);
-        alert("An error occurred while checking answers.");
-    }
-}
-///Results Handling
-function showResults(result) {
-    const resultContainer = document.getElementById('result-container');
-    resultContainer.innerHTML = `
-        <h2>Your Score: ${result.score}/${result.total_questions}</h2>
-    `;
-
-    // Add detailed feedback for each question
-    result.details.forEach((detail) => {
-        const feedback = document.createElement('div');
-        feedback.innerHTML = `
-            <p><strong>Question:</strong> ${detail.question}</p>
-            <p><strong>Your Answer:</strong> ${detail.player_answer || "No Answer Selected"}</p>
-            <p><strong>Correct Answer:</strong> ${detail.correct_answer}</p>
-            <p>${detail.is_correct ? "✅ Correct!" : "❌ Incorrect!"}</p>
-            <hr>
-        `;
-        resultContainer.appendChild(feedback);
-    });
-
-    // Add "Next Level" button
-    const nextLevelButton = document.createElement('button');
-    nextLevelButton.innerText = "Next Level";
-    nextLevelButton.style.marginTop = "20px";
-    nextLevelButton.onclick = goToNextLevel; // Call function to handle level progression
-    resultContainer.appendChild(nextLevelButton);
-    // Show only the result container
-    resultContainer.style.display = 'block';
-}
-
-
-/// Got to next level
-async function goToNextLevel() {
-    const playerId = localStorage.getItem("playerId"); // Retrieve player ID
-    const currentLevel = localStorage.getItem("currentLevel"); // Retrieve current level
-    const score = localStorage.getItem("currentScore"); // Retrieve the current score (if stored)
-
-    if (!playerId || !currentLevel) {
-        alert("Player or level information is missing!");
-        return; // Stop execution if data is missing
-    }
-
-    try {
-        // Save the current level score before proceeding
-        if (score) {
-            console.log(`Saving score for Player: ${playerId}, Level: ${currentLevel}, Score: ${score}`);
-            await savePlayerScore(currentLevel, parseInt(score)); // Save the current score
-        }
-
-        // Clear the result area before moving to the next level
-        const resultContainer = document.getElementById("result-container");
-        resultContainer.innerHTML = ""; // Clear the contents of the result container
-        resultContainer.style.display = "none"; // Hide the result container
-
-        // Fetch the next level data from the back-end
-        const response = await fetch("/next_level", { method: "POST" });
-        if (response.ok) {
-            const data = await response.json();
-            if (data.level) {
-                // Update local storage with the new level
-                localStorage.setItem("currentLevel", data.level);
-
-                // Reset the current score
-                localStorage.removeItem("currentScore");
-
-                // Transition to the next level
-                console.log(`Welcome to ${data.level}!`);
-                loadImage(); // Load the next level image or question
-            } else {
-                // All levels are completed
-                showFinalCongratulations(); // Show final results modal
-            }
-        } else {
-            alert("Failed to progress to the next level.");
-        }
-    } catch (error) {
-        console.error("Error progressing to next level:", error);
-        alert("An error occurred while progressing to the next level.");
-    }
-}
-
-// Function to display the final congratulations modal
-function showFinalCongratulations() {
-    // Create the modal elements
-    const modal = document.createElement('div');
-    modal.id = 'final-congrats-modal';
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.background = 'rgba(0, 0, 0, 0.8)';
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    modal.style.zIndex = '1000';
-
-    const modalContent = document.createElement('div');
-    modalContent.style.background = '#fff';
-    modalContent.style.padding = '30px';
-    modalContent.style.borderRadius = '10px';
-    modalContent.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.3)';
-    modalContent.style.textAlign = 'center';
-    modalContent.style.maxWidth = '600px';
-    modalContent.style.width = '80%';
-
-    const modalMessage = document.createElement('h1');
-    modalMessage.innerText = '🎉 Congratulations! 🎉';
-    modalMessage.style.color = '#4caf50';
-    modalMessage.style.marginBottom = '20px';
-
-    const modalSubMessage = document.createElement('p');
-    modalSubMessage.innerText = "You've completed all levels! Great job!";
-    modalSubMessage.style.fontSize = '18px';
-    modalSubMessage.style.marginBottom = '30px';
-
-    const exitButton = document.createElement('button');
-    exitButton.innerText = 'Exit Game';
-    exitButton.style.padding = '10px 20px';
-    exitButton.style.marginRight = '10px';
-    exitButton.style.background = '#f44336';
-    exitButton.style.color = '#fff';
-    exitButton.style.border = 'none';
-    exitButton.style.borderRadius = '5px';
-    exitButton.style.cursor = 'pointer';
-    exitButton.onclick = () => {
-        document.body.removeChild(modal); // Remove the modal
-        resetGame(); // Reset the game
-    };
-
-    const restartButton = document.createElement('button');
-    restartButton.innerText = 'Play Again';
-    restartButton.style.padding = '10px 20px';
-    restartButton.style.background = '#4caf50';
-    restartButton.style.color = '#fff';
-    restartButton.style.border = 'none';
-    restartButton.style.borderRadius = '5px';
-    restartButton.style.cursor = 'pointer';
-    restartButton.onclick = () => {
-        document.body.removeChild(modal); // Remove the modal
-        resetGame(); // Reset the game
-        startGame(); // Restart the game
-    };
-
-    // Append elements to modal
-    modalContent.appendChild(modalMessage);
-    modalContent.appendChild(modalSubMessage);
-    modalContent.appendChild(exitButton);
-    modalContent.appendChild(restartButton);
-    modal.appendChild(modalContent);
-
-    // Append modal to the body
-    document.body.appendChild(modal);
-}
-
-
-
-function showValidateButton() {
-    const validateButton = document.getElementById("validate-button");
-    validateButton.style.display = "block"; // Make the button visible
-        }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const puzzleImage = document.getElementById("puzzle-image");
-    puzzleImage.addEventListener("click", handleImageClick);
-        });
-
-
-async function savePlayerScore(level, score) {
-    const playerId = localStorage.getItem("playerId");
-    console.log("Sending to /save_score:", { playerId, level, score }); // Log the data being sent
-
-    try {
-        const response = await fetch("/save_score", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ player_id: playerId, level, score }),
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Score saved successfully:", data); // Log the response
-        } else {
-            console.error("Failed to save score:", response.statusText);
-            alert("Failed to save score!");
-        }
-    } catch (error) {
-        console.error("Error saving score:", error);
-        alert("An error occurred while saving the score.");
-    }
-}
-
-
-
-async function showFinalResults() {
-    const playerId = localStorage.getItem("playerId");
-    console.log("Fetching total score for playerId:", playerId); // Debugging log
-
-    if (!playerId) {
-        alert("Player ID is missing. Cannot fetch total score.");
-        return;
-    }
-
-    try {
-        const response = await fetch(`/get_total_score/${playerId}`);
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Total score retrieved successfully:", data); // Debugging log
-
-            const finalScoreMessage = `Great job, ${playerId}! Your total score is ${data.total_score}.`;
-
-            document.getElementById("final-score-message").innerText = finalScoreMessage;
-
-            // Hide the game area and show the final results
-            document.getElementById("game-area").style.display = "none";
-            document.getElementById("final-results-area").style.display = "block";
-        } else {
-            const errorData = await response.json();
-            console.error("Failed to fetch total score:", errorData); // Debugging log
-            alert(`Error fetching total score: ${errorData.error}`);
-        }
-    } catch (error) {
-        console.error("Error fetching final score:", error);
-        alert("An error occurred while retrieving the final score.");
-    }
-}
-
-
-function resetGame() {
-    // Hide game-related areas
-    document.getElementById("game-area").style.display = "none";
-    document.getElementById("questions-area").style.display = "none";
-    document.getElementById("result-container").style.display = "none";
-    document.getElementById("final-results-area").style.display = "none";
-
-    // Check if player ID exists
-    const playerId = localStorage.getItem("playerId");
-    if (playerId) {
-        alert(`Welcome back, ${playerId}! Start a new game.`);
-        loadImage(); // Start the game immediately
-    } else {
-        // Show player ID input area if no player ID is found
-        document.getElementById("player-id-area").style.display = "block";
-    }
-}
-
-
-function restartGame() {
-    // Clear the player ID from local storage
-    localStorage.removeItem("playerId");
-
-    // Reset UI
-    document.getElementById("final-results-area").style.display = "none";
-    document.getElementById("player-id-area").style.display = "block";
-}
-
-function resizeImage(imageElement) {
-    const desiredWidth = 500; // Desired width
-    const desiredHeight = 500; // Desired height
-
-    const img = new Image();
-    img.src = imageElement.src;
-
-    img.onload = function () {
-        const aspectRatio = img.width / img.height;
-
-        if (img.width < desiredWidth && img.height < desiredHeight) {
-            // Upscale smaller images
-            if (aspectRatio > 1) {
-                // Landscape image
-                imageElement.style.width = `${desiredWidth}px`;
-                imageElement.style.height = `${desiredWidth / aspectRatio}px`;
-            } else {
-                // Portrait or square image
-                imageElement.style.width = `${desiredHeight * aspectRatio}px`;
-                imageElement.style.height = `${desiredHeight}px`;
-            }
-        } else if (img.width > desiredWidth || img.height > desiredHeight) {
-            // Downscale larger images
-            if (aspectRatio > 1) {
-                // Landscape image
-                imageElement.style.width = `${desiredWidth}px`;
-                imageElement.style.height = `${desiredWidth / aspectRatio}px`;
-            } else {
-                // Portrait or square image
-                imageElement.style.width = `${desiredHeight * aspectRatio}px`;
-                imageElement.style.height = `${desiredHeight}px`;
-            }
-        } else {
-            // Image is within bounds
-            imageElement.style.width = `${img.width}px`;
-            imageElement.style.height = `${img.height}px`;
-        }
-    };
-}
-
-
-// Apply resizing whenever the image is loaded
-const puzzleImage = document.getElementById('puzzle-image');
-puzzleImage.onload = function () {
-    resizeImage(puzzleImage);
-};
-
-// Winner Selection
-async function showWinner() {
-    try {
-        const response = await fetch('/get_winner'); // Fetch winner from backend
-        if (response.ok) {
-            const data = await response.json();
-            const winnerMessage = document.getElementById("winner-message");
-
-            // Check if winner data exists
-            if (data.winner) {
-                const winner = data.winner;
-                winnerMessage.innerText = `🏆 The winner is ${winner.player_id} with a total score of ${winner.total_score}! 🎉`;
-            } else {
-                // Handle case where no winner is available
-                winnerMessage.innerText = "No winner has been selected yet.";
-            }
-        } else {
-            const errorData = await response.json();
-            alert(`Failed to fetch the winner: ${errorData.error || "Unknown error."}`);
-        }
-    } catch (error) {
-        console.error("Error fetching winner:", error);
-        alert("An unexpected error occurred while fetching the winner.");
-    }
-}
-
-// Manual Winner Selection
-async function manualSelectWinner() {
-    try {
-        const response = await fetch('/manual_select_winner', { method: 'POST' });
-        if (response.ok) {
-            alert("Winner selection triggered successfully.");
-            showWinner(); // Fetch and display the winner
-        } else {
-            const errorData = await response.json();
-            alert(`Failed to manually select the winner: ${errorData.error || "Unknown error."}`);
-        }
-    } catch (error) {
-        console.error("Error triggering manual winner selection:", error);
-        alert("An unexpected error occurred while manually selecting the winner.");
-    }
-}
-
-
-
-
-
- </script>
+    <script src="static/script.js"></script>
 </body>
-</html>
 
+</html>

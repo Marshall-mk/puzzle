@@ -1,73 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel</title>
-    <link rel="stylesheet" href="/static/styles.css">
-    <script src="/static/scripts.js"></script>
     <style>
         /* Inline styles for enhanced customization */
         body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: url('static/images/background1.jpg') no-repeat center center fixed;
-    background-size: cover;
-    transition: background 1s ease-in-out; /* Smooth transition for dynamic changes */
-}
-/* Header Styling */
-#app-header {
-    background: rgba(255, 255, 255, 0.000001); /* Increased transparency */
-    color: rgb(13, 13, 13);
-    padding: 10px 10px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Softer shadow */
-    border-bottom: 1px solid rgba(207, 204, 207, 0.3); /* More transparent border */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
-    backdrop-filter: blur(5px); /* Softer blur */
-}
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
 
-.header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    padding: 0 20px;
-}
+        /* Header Styling */
+        #app-header {
+            background: rgba(255, 255, 255, 0.000001);
+            /* Increased transparency */
+            color: rgb(13, 13, 13);
+            padding: 10px 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            /* Softer shadow */
+            border-bottom: 1px solid rgba(207, 204, 207, 0.3);
+            /* More transparent border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            backdrop-filter: blur(5px);
+            /* Softer blur */
+        }
 
-.header-text {
-    text-align: center;
-    flex-grow: 1;
-}
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
 
-#app-header h1 {
-    margin: 0;
-    font-size: 22px; /* Adjusted font size */
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-}
+        .header-text {
+            text-align: center;
+            flex-grow: 1;
+        }
 
-#app-header p {
-    margin: 5px 0 0;
-    font-size: 14px; /* Slightly reduced font size */
-    color: rgba(0, 0, 0, 0.7); /* Softer text color */
-}
+        #app-header h1 {
+            margin: 0;
+            font-size: 22px;
+            /* Adjusted font size */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            /* Subtle shadow */
+        }
 
-.header-logo {
-    width: 70px; /* Adjust logo size */
-    height: auto;
-}
+        #app-header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            /* Slightly reduced font size */
+            color: rgba(0, 0, 0, 0.7);
+            /* Softer text color */
+        }
 
-#logo-left {
-    margin-right: 15px; /* Adjust spacing */
-}
+        .header-logo {
+            width: 70px;
+            /* Adjust logo size */
+            height: auto;
+        }
 
-#logo-right {
-    margin-left: 15px; /* Adjust spacing */
-}
+        #logo-left {
+            margin-right: 15px;
+            /* Adjust spacing */
+        }
+
+        #logo-right {
+            margin-left: 15px;
+            /* Adjust spacing */
+        }
 
 
 
@@ -76,6 +85,7 @@
             margin: 0;
             font-size: 24px;
         }
+
         main {
             margin: 20px auto;
             max-width: 800px;
@@ -84,15 +94,18 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
+
         .section-title {
             color: #007bff;
             text-align: center;
             margin-top: 20px;
         }
+
         .button-group {
             text-align: center;
             margin-top: 30px;
         }
+
         button {
             font-size: 16px;
             padding: 10px 20px;
@@ -102,23 +115,28 @@
             cursor: pointer;
             transition: all 0.3s ease-in-out;
         }
+
         button:hover {
             opacity: 0.9;
         }
+
         .btn-primary {
             background-color: #011a35;
             color: white;
         }
+
         .btn-danger {
             background-color: #cfa107;
             color: white;
         }
+
         .message {
             margin-top: 20px;
             font-size: 18px;
             text-align: center;
             color: #333;
         }
+
         footer {
             text-align: center;
             margin-top: 20px;
@@ -127,24 +145,25 @@
             border-top: 1px solid #eaeaea;
         }
 
-/* Button Styling */
-#winner-section {
-    text-align: center;
-    margin-bottom: 30px;
-}
+        /* Button Styling */
+        #winner-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-#manual-select-winner {
-    padding: 10px 20px;
-    background-color: #12012b;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        #manual-select-winner {
+            padding: 10px 20px;
+            background-color: #12012b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-#manual-select-winner:hover {
-    background-color: #af7500; /* Darker shade on hover */
-}
+        #manual-select-winner:hover {
+            background-color: #af7500;
+            /* Darker shade on hover */
+        }
 
         /* Message Section */
         .message {
@@ -153,40 +172,96 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Header -->
-<header id="app-header">
-    <div class="header-content">
-        <img src="static/images/logo-left.png" alt="Left Logo" class="header-logo" id="logo-left">
-        <div class="header-text">
-            <h1>eHealth Puzzle Game: Admin Panel</h1>
-            <p>Manage game winners and scores efficiently!</p>
+    <header id="app-header">
+        <div class="header-content">
+            <img src="static/images/logos/logo-left.png" alt="Left Logo" class="header-logo" id="logo-left">
+            <div class="header-text">
+                <h1>Puzzle Game: Admin Panel</h1>
+                <p>Manage game winners and scores efficiently!</p>
+            </div>
+            <img src="static/images/logos/logo-right.png" alt="Right Logo" class="header-logo" id="logo-right">
         </div>
-        <img src="static/images/logo-right.png" alt="Right Logo" class="header-logo" id="logo-right">
-    </div>
-</header> 
+    </header>
 
-    <main style="max-width: 800px; margin: 20px auto; padding: 20px; background-color: #fff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+    <main
+        style="max-width: 800px; margin: 20px auto; padding: 20px; background-color: #fff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px;">
         <h2 style="text-align: center; color: #333; margin-bottom: 20px;">Winner Selection</h2>
-        <p style="text-align: center; margin-bottom: 20px; color: #555;">Use the buttons below to select or display the winner.</p>
-    <!-- Winner Selection Section -->
-    <div id="winner-section">
-        <button id="manual-select-winner" onclick="manualSelectWinner()">
-            Select Winner Now
-        </button>
-    </div>
+        <p style="text-align: center; margin-bottom: 20px; color: #555;">Use the buttons below to select or display the
+            winner.</p>
+        <!-- Winner Selection Section -->
+        <div id="winner-section">
+            <button id="manual-select-winner" onclick="manualSelectWinner()">
+                Select Winner Now
+            </button>
+        </div>
+
+        <!-- Configuration Section -->
+        <div id="config-section" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+            <h2 style="text-align: center; color: #333; margin-bottom: 20px;">Game Configuration</h2>
+
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>Grid Size</h3>
+                <form id="config-form" onsubmit="updateConfig(event)">
+                    <label for="grid-size">Select Grid Size:</label>
+                    <select id="grid-size" name="grid_size" style="padding: 8px; border-radius: 4px;">
+                        <option value="3">3x3</option>
+                        <option value="4" selected>4x4</option>
+                        <option value="5">5x5</option>
+                        <option value="6">6x6</option>
+                        <option value="8">8x8</option>
+                        <option value="10">10x10</option>
+                    </select>
+
+                    <br><br>
+                    <label for="countdown-time">Countdown (seconds):</label>
+                    <input type="number" id="countdown-time" name="countdown_time" min="0" max="60" value="3"
+                        style="padding: 8px; border-radius: 4px; width: 60px;">
+
+                    <button type="submit" class="btn-primary" style="margin-left: 10px;">Update Config</button>
+                </form>
+            </div>
+
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px;">
+                <h3>Upload New Image</h3>
+                <form id="upload-form" onsubmit="uploadImage(event)">
+                    <div style="margin-bottom: 10px;">
+                        <label for="upload-level">Level:</label>
+                        <select id="upload-level" name="level" required style="padding: 8px; border-radius: 4px;">
+                            <option value="level_1">Level 1</option>
+                            <option value="level_2">Level 2</option>
+                            <option value="level_3">Level 3</option>
+                            <option value="level_4">Level 4</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label for="upload-file">Image File:</label>
+                        <input type="file" id="upload-file" name="file" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Upload Image</button>
+                </form>
+                <div id="upload-message" class="message" style="font-size: 14px; margin-top: 10px;"></div>
+            </div>
+        </div>
 
         <!-- Winner Details Section -->
-        <div id="winner-details" style="display: none; text-align: center; padding: 20px; border: 1px solid #ddd; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-            <h3 style="color: #066f45; margin-bottom: 10px;">🏆 Winner Details 🏆</h3>
-            <p id="winner-name" style="font-size: 16px; color: #333; margin: 5px 0;"><strong>Name:</strong> <span></span></p>
-            <p id="winner-score" style="font-size: 16px; color: #333; margin: 5px 0;"><strong>Score:</strong> <span></span></p>
-            <p id="winner-time" style="font-size: 16px; color: #333; margin: 5px 0;"><strong>Completion Time:</strong> <span></span></p>
+        <div id="winner-details"
+            style="display: none; text-align: center; padding: 20px; border: 1px solid #ddd; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+            <!-- Winner details will be dynamically populated here -->
         </div>
 
         <!-- Dynamic Message Section -->
-        <div id="winner-message" class="message" style="text-align: center; margin-top: 20px; color: #d9534f; font-size: 16px;"></div>
+        <div id="winner-message" class="message"
+            style="text-align: center; margin-top: 20px; color: #d9534f; font-size: 16px;"></div>
+
+
+
+        <!-- Dynamic Message Section -->
+        <div id="winner-message" class="message"
+            style="text-align: center; margin-top: 20px; color: #d9534f; font-size: 16px;"></div>
     </main>
 
     <footer style="text-align: center; padding: 10px; background-color: #f5f5f5; border-top: 1px solid #ddd;">
@@ -197,91 +272,183 @@
     <script>
 
 
-// Dynamic Background Setup
-const backgrounds = [
-    'static/images/background1.jpg',
-    'static/images/background2.jpg',
-    'static/images/background3.jpg',
-    'static/images/background4.jpeg',
-    'static/images/background5.jpg',
-    'static/images/background6.jpg',
-    'static/images/background7.jpg',
-    'static/images/background9.jpg',
-    'static/images/background10.jpg',
-    'static/images/background11.jpg',
-    'static/images/background12.jpg'
+        // Config and Upload Functions
+        async function updateConfig(event) {
+            event.preventDefault();
+            const gridSize = document.getElementById('grid-size').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            const password = urlParams.get('password') || 'admin123';
 
-];
-let currentIndex = 0; // Start with the first image
+            const formData = new FormData();
+            formData.append('grid_size', gridSize);
+            formData.append('password', password);
 
-function changeBackground() {
-    currentIndex = (currentIndex + 1) % backgrounds.length; // Cycle through images
-    console.log(`Changing background to: ${backgrounds[currentIndex]} (Index: ${currentIndex})`);
-    document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
-}
-// Start dynamic background changes when the page loads
-document.addEventListener("DOMContentLoaded", () => {
-    document.body.style.backgroundImage = `url('${backgrounds[0]}')`; // Set initial background
-    setInterval(changeBackground, 10000); // Change background every 10 seconds
-});
+            try {
+                const response = await fetch('/admin/config', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                } else {
+                    alert(data.error);
+                }
+            } catch (e) {
+                alert("Error updating config");
+            }
+        }
+
+        async function uploadImage(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('upload-file');
+            const level = document.getElementById('upload-level').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            const password = urlParams.get('password') || 'admin123';
+
+            if (!fileInput.files[0]) return;
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('level', level);
+            formData.append('password', password);
+
+            const msgDiv = document.getElementById('upload-message');
+            msgDiv.innerText = "Uploading...";
+            msgDiv.style.color = "#333";
+
+            try {
+                const response = await fetch('/admin/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    msgDiv.innerText = data.message;
+                    msgDiv.style.color = "green";
+                    fileInput.value = ""; // Clear input
+                } else {
+                    msgDiv.innerText = data.error;
+                    msgDiv.style.color = "red";
+                }
+            } catch (e) {
+                msgDiv.innerText = "Error uploading image";
+                msgDiv.style.color = "red";
+            }
+        }
 
 
         // Winner Selection
-// Show Winner Function
-async function showWinner() {
-    try {
-        const response = await fetch('/get_winner');
-        if (response.ok) {
-            const data = await response.json();
-            const winnerDetails = document.getElementById("winner-details");
-            const winnerMessage = document.getElementById("winner-message");
+        // Show Winner Function
+        // Winner Selection
+        // Winner Selection
+        async function showWinner() {
+            try {
+                const response = await fetch('/get_winners'); // Use updated endpoint
+                if (response.ok) {
+                    const data = await response.json();
+                    const winnerDetails = document.getElementById("winner-details");
+                    const winnerMessage = document.getElementById("winner-message");
 
-            if (data.winner) {
-                // Populate winner details
-                winnerDetails.style.display = "block";
-                document.getElementById("winner-name").querySelector("span").innerText = data.winner.player_id;
-                document.getElementById("winner-score").querySelector("span").innerText = data.winner.total_score;
-                document.getElementById("winner-time").querySelector("span").innerText =
-                    data.winner.last_completion_time || "Not available";
+                    if (data.winners && data.winners.length > 0) {
+                        // Clear previous winner details
+                        winnerDetails.innerHTML = "";
 
-                // Clear any error messages
-                winnerMessage.innerText = "";
-            } else {
-                // No winner available
-                winnerDetails.style.display = "none";
-                winnerMessage.innerText = "No winner has been selected yet.";
+                        // Iterate over winners and display their details
+                        data.winners.forEach(winner => {
+                            // Extract timestamps
+                            const startTime = new Date(winner.start_time);
+                            const lastTime = new Date(
+                                Object.values(winner.timestamps).sort().pop() // Get the latest timestamp
+                            );
+
+
+                            function formatTime(date) {
+                                return `${date.getHours()}h ${date.getMinutes()}m ${date.getSeconds()}s`;
+                            }
+                            // Format Start Time and Completion Time
+                            const formattedStartTime = formatTime(startTime);
+                            const formattedCompletionTime = formatTime(lastTime);
+
+
+                            // Calculate the total time difference
+                            const timeDiffMs = lastTime - startTime;
+                            const hours = Math.floor(timeDiffMs / (1000 * 60 * 60));
+                            const minutes = Math.floor((timeDiffMs % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((timeDiffMs % (1000 * 60)) / 1000);
+                            const totalTimeTaken = `${hours}h ${minutes}m ${seconds}s`;
+
+
+
+                            // Populate winner details dynamically
+                            const winnerBlock = `
+                        <div style="margin-bottom: 20px; text-align: left;">
+                            <h3 style="color: #066f45;">🏆 Winner Details 🏆</h3>
+                            <p><strong>Name:</strong> ${winner.player_id}</p>
+                            <p><strong>Score:</strong> ${winner.total_score}</p>
+                            <p><strong>Start Time:</strong> ${formattedStartTime || "Not available"}</p>
+                            <p><strong>Completion Time:</strong> ${formattedCompletionTime || "Not available"}</p>
+                            <p><strong>Total Time Taken:</strong> ${totalTimeTaken}</p>
+                        </div>
+                    `;
+
+                            winnerDetails.innerHTML += winnerBlock;
+                        });
+
+                        // Display winner details section
+                        winnerDetails.style.display = "block";
+                        winnerMessage.innerText = "";
+                    } else {
+                        // No winners available
+                        winnerDetails.style.display = "none";
+                        winnerMessage.innerText = "No winners have been selected yet.";
+                    }
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to fetch the winners: ${errorData.error || "Unknown error."}`);
+                }
+            } catch (error) {
+                console.error("Error fetching winners:", error);
+                alert("An unexpected error occurred while fetching the winners.");
             }
-        } else {
-            const errorData = await response.json();
-            alert(`Failed to fetch the winner: ${errorData.error || "Unknown error."}`);
         }
-    } catch (error) {
-        console.error("Error fetching winner:", error);
-        alert("An unexpected error occurred while fetching the winner.");
-    }
-}
+
+        // Manual Winner Selection
+        async function manualSelectWinner() {
+            try {
+                // Get password from URL parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const password = urlParams.get('password') || 'admin123';
+
+                // Send password as form data
+                const formData = new FormData();
+                formData.append('password', password);
+
+                const response = await fetch('/select_winner', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Call showWinner() to fetch and display the winner details
+                    await showWinner();
+                } else {
+                    const errorData = await response.json();
+                    console.error("Error triggering manual winner selection:", errorData);
+                    alert(`Failed to manually select the winners: ${errorData.error || "Unknown error."}`);
+                }
+            } catch (error) {
+                console.error("Error selecting winners:", error);
+                alert("An unexpected error occurred while selecting the winners.");
+            }
+        }
 
 
-// Manual Winner Selection
-async function manualSelectWinner() {
-    try {
-        const response = await fetch('/manual_select_winner', { method: 'POST' });
-        if (response.ok) {
-            showWinner(); // Fetch and display the winner details
-        } else {
-            const errorData = await response.json();
-            console.error("Error triggering manual winner selection:", errorData);
-            alert(`Failed to manually select the winner: ${errorData.error || "Unknown error."}`);
-        }
-    } catch (error) {
-        console.error("Error selecting winner:", error);
-        alert("An unexpected error occurred while selecting the winner.");
-    }
-}
     </script>
     <footer>
-        <p>&copy; MAIA 8 Students: 2024 Game Admin Panel. All rights reserved. </p>
+        <p>&copy; Game Admin Panel. All rights reserved. </p>
     </footer>
-    
+
 </body>
+
 </html>

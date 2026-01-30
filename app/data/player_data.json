@@ -1,0 +1,70 @@
+{
+    "players": [
+        {
+            "player_id": "zimbabwe",
+            "start_time": "2024-12-09T22:57:20.105908",
+            "scores": {
+                "level_1": 3,
+                "level_3": 1,
+                "level_4": 5
+            },
+            "weighted_scores": {
+                "level_1": 10.0,
+                "level_3": 10.0,
+                "level_4": 40.0
+            },
+            "total_score": 60.0,
+            "timestamps": {
+                "level_1": "2024-12-10T11:25:12.774089",
+                "level_3": "2024-12-10T11:27:05.765225",
+                "level_4": "2024-12-10T11:30:53.430171"
+            }
+        },
+        {
+            "player_id": "JoanaTheWinner",
+            "start_time": "2024-12-10T11:22:37.768514",
+            "scores": {
+                "level_1": 3,
+                "level_2": 2,
+                "level_3": 2,
+                "level_4": 5
+            },
+            "weighted_scores": {
+                "level_1": 10.0,
+                "level_2": 13.33,
+                "level_3": 20.0,
+                "level_4": 40.0
+            },
+            "total_score": 83.33,
+            "timestamps": {
+                "level_1": "2024-12-10T11:25:28.164902",
+                "level_2": "2024-12-10T11:27:43.288239",
+                "level_3": "2024-12-10T11:32:03.732954",
+                "level_4": "2024-12-10T11:35:41.369553"
+            }
+        },
+        {
+            "player_id": "WeAreNumberOneInYourHeart",
+            "start_time": "2024-12-10T11:23:45.829009",
+            "scores": {
+                "level_1": 3,
+                "level_2": 3,
+                "level_3": 3,
+                "level_4": 3
+            },
+            "weighted_scores": {
+                "level_1": 10.0,
+                "level_2": 20.0,
+                "level_3": 30.0,
+                "level_4": 24.0
+            },
+            "total_score": 84.0,
+            "timestamps": {
+                "level_1": "2024-12-10T11:26:01.647985",
+                "level_2": "2024-12-10T11:27:39.206937",
+                "level_3": "2024-12-10T11:29:29.699742",
+                "level_4": "2024-12-10T11:32:28.017724"
+            }
+        }
+    ]
+}
