@@ -68,6 +68,11 @@ def cleanup_temp_images(max_age_hours: int = 24):
     """
     try:
         temp_folder = "app/static/images/temp"
+
+        # Ensure temp folder exists
+        if not os.path.exists(temp_folder):
+            return
+
         current_time = datetime.now()
 
         # Get all image files in temp folder
@@ -109,6 +114,7 @@ def get_image(session_id: Optional[str] = Header(None, alias="X-Session-ID")):
     # Get or create session
     session_id = get_or_create_session(session_id)
     session = game_sessions[session_id]
+    print(f"Session ID for /image: {session_id[:8]}... (total sessions: {len(game_sessions)})")
 
     current_level = session["current_level"]
 
@@ -153,88 +159,121 @@ def get_image(session_id: Optional[str] = Header(None, alias="X-Session-ID")):
 @app.post("/shuffle")
 def shuffle_image(session_id: Optional[str] = Header(None, alias="X-Session-ID")):
     """Shuffle the image into a grid."""
-    # Get session
-    if not session_id or session_id not in game_sessions:
-        return JSONResponse({"error": "Invalid session"}, status_code=400)
+    try:
+        print(f"[/shuffle] Received session_id: {session_id[:8] if session_id else 'None'}...")
+        print(f"[/shuffle] Active sessions: {len(game_sessions)}, Session IDs: {[sid[:8] for sid in game_sessions.keys()]}")
 
-    session = game_sessions[session_id]
-    current_level = session["current_level"]
-    current_image_name = session["current_image_name"]
+        # Get or create session (handle server restarts gracefully)
+        if not session_id or session_id not in game_sessions:
+            print(f"WARNING: Invalid/missing session {session_id}, returning error")
+            return JSONResponse({
+                "error": "Session expired or invalid. Please refresh the page to start a new game.",
+                "session_expired": True
+            }, status_code=400)
 
-    # Validate session state
-    if current_image_name is None:
-        return JSONResponse({"error": "No image selected. Please load an image first."}, status_code=400)
+        session = game_sessions[session_id]
+        print(f"[/shuffle] Found session, current_level: {session['current_level']}, current_image: {session.get('current_image_name')}")
+        current_level = session["current_level"]
+        current_image_name = session["current_image_name"]
 
-    if current_level not in image_metadata:
-        return JSONResponse({"error": "Invalid level"}, status_code=400)
+        # Validate session state
+        if current_image_name is None:
+            return JSONResponse({"error": "No image selected. Please load an image first."}, status_code=400)
 
-    # Verify the image exists in the current level's metadata
-    if current_image_name not in image_metadata[current_level]:
-        return JSONResponse({"error": f"Image {current_image_name} not found in {current_level}"}, status_code=400)
+        if current_level not in image_metadata:
+            return JSONResponse({"error": "Invalid level"}, status_code=400)
 
-    # Set patch size dynamically based on config
-    grid_size = get_grid_size()
-    patch_size = 512 // grid_size
-    target_size = patch_size * grid_size # Ensure image is perfectly divisible
+        # Verify the image exists in the current level's metadata
+        if current_image_name not in image_metadata[current_level]:
+            return JSONResponse({"error": f"Image {current_image_name} not found in {current_level}"}, status_code=400)
 
-    # Debugging output
-    print(f"Level: {current_level}, Grid Size: {grid_size}, PATCH_SIZE: {patch_size}, Target Size: {target_size}")
+        # Set patch size dynamically based on config
+        grid_size = get_grid_size()
+        patch_size = 512 // grid_size
+        target_size = patch_size * grid_size # Ensure image is perfectly divisible
 
-    # Ensure a valid image is selected
-    if current_image_name is None:
-        return JSONResponse({"error": "No image selected"}, status_code=400)
+        # Debugging output
+        print(f"Level: {current_level}, Grid Size: {grid_size}, PATCH_SIZE: {patch_size}, Target Size: {target_size}")
 
-    image_path = f"app/static/images/{current_level}/{current_image_name}"
+        # Ensure a valid image is selected
+        if current_image_name is None:
+            return JSONResponse({"error": "No image selected"}, status_code=400)
 
-    # Check if the selected image exists
-    if not os.path.exists(image_path):
-        return JSONResponse({"error": "Image not found"}, status_code=404)
+        image_path = f"app/static/images/{current_level}/{current_image_name}"
 
-    # Open and process the image
-    img = Image.open(image_path).resize((target_size, target_size)).convert("L")  # Grayscale conversion
-    img_array = np.array(img)
+        # Check if the selected image exists
+        if not os.path.exists(image_path):
+            print(f"ERROR: Image not found at path: {image_path}")
+            return JSONResponse({"error": "Image not found"}, status_code=404)
 
-    # Divide the image into patches
-    h, w = img_array.shape[:2]
-    # Verify shape matching
-    if h % patch_size != 0 or w % patch_size != 0:
-         # This shouldn't happen if we resized to target_size
-         pass
+        # Open and process the image
+        print(f"Opening image: {image_path}")
+        img = Image.open(image_path).resize((target_size, target_size)).convert("L")  # Grayscale conversion
+        img_array = np.array(img)
 
-    patches = (
-        img_array.reshape(h // patch_size, patch_size, -1, patch_size)
-        .swapaxes(1, 2)
-        .reshape(-1, patch_size, patch_size)
-    )
+        # Divide the image into patches
+        h, w = img_array.shape[:2]
+        # Verify shape matching
+        if h % patch_size != 0 or w % patch_size != 0:
+             # This shouldn't happen if we resized to target_size
+             pass
 
-    # Store patches in session
-    session["patches"] = patches.tolist()  # Convert to list for JSON serialization
-    session["original_positions"] = list(range(len(patches)))
-    session["shuffled_positions"] = session["original_positions"].copy()
+        patches = (
+            img_array.reshape(h // patch_size, patch_size, -1, patch_size)
+            .swapaxes(1, 2)
+            .reshape(-1, patch_size, patch_size)
+        )
 
-    # Shuffle the positions
-    random.shuffle(session["shuffled_positions"])
+        # Store patches in session
+        session["patches"] = patches.tolist()  # Convert to list for JSON serialization
+        session["original_positions"] = list(range(len(patches)))
+        session["shuffled_positions"] = session["original_positions"].copy()
 
-    # Reconstruct the shuffled image
-    shuffled_image = np.zeros_like(img_array)
-    index = 0
-    for i in range(0, h, patch_size):
-        for j in range(0, w, patch_size):
-            shuffled_image[i:i + patch_size, j:j + patch_size] = patches[session["shuffled_positions"][index]]
-            index += 1
+        # Shuffle the positions
+        random.shuffle(session["shuffled_positions"])
 
-    # Save the shuffled image with unique name per session, level, and timestamp in temp folder
-    timestamp = int(time.time() * 1000)
-    shuffled_image_path = f"app/static/images/temp/shuffled_{session_id[:8]}_{current_level}_{timestamp}.jpg"
-    Image.fromarray(shuffled_image).save(shuffled_image_path)
+        # Reconstruct the shuffled image
+        shuffled_image = np.zeros_like(img_array)
+        index = 0
+        for i in range(0, h, patch_size):
+            for j in range(0, w, patch_size):
+                shuffled_image[i:i + patch_size, j:j + patch_size] = patches[session["shuffled_positions"][index]]
+                index += 1
 
-    # Store the current shuffled image path in session
-    session["current_shuffled_image_path"] = shuffled_image_path
+        # Ensure temp directory exists
+        temp_dir = "app/static/images/temp"
+        os.makedirs(temp_dir, exist_ok=True)
 
-    return JSONResponse({
-        "shuffled_image_url": f"/static/images/temp/shuffled_{session_id[:8]}_{current_level}_{timestamp}.jpg",
-        "grid_size": grid_size
-    })
+        # Save the shuffled image with unique name per session, level, and timestamp in temp folder
+        timestamp = int(time.time() * 1000)
+        shuffled_image_path = f"app/static/images/temp/shuffled_{session_id[:8]}_{current_level}_{timestamp}.jpg"
+
+        print(f"Saving shuffled image to: {shuffled_image_path}")
+        Image.fromarray(shuffled_image).save(shuffled_image_path)
+
+        # Verify file was created
+        if os.path.exists(shuffled_image_path):
+            print(f"✓ Shuffled image created successfully: {shuffled_image_path}")
+        else:
+            print(f"✗ ERROR: Failed to create shuffled image at: {shuffled_image_path}")
+            return JSONResponse({"error": "Failed to create shuffled image"}, status_code=500)
+
+        # Store the current shuffled image path in session
+        session["current_shuffled_image_path"] = shuffled_image_path
+
+        shuffled_url = f"/static/images/temp/shuffled_{session_id[:8]}_{current_level}_{timestamp}.jpg"
+        print(f"Returning shuffled image URL: {shuffled_url}")
+
+        return JSONResponse({
+            "shuffled_image_url": shuffled_url,
+            "grid_size": grid_size
+        })
+
+    except Exception as e:
+        print(f"✗ ERROR in shuffle_image: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return JSONResponse({"error": f"Shuffle failed: {str(e)}"}, status_code=500)
 
 
 #####perform swapping
@@ -247,67 +286,90 @@ def swap_patches(
     """
     Swap two patches in the shuffled image and return the updated image URL.
     """
-    # Get session
-    if not session_id or session_id not in game_sessions:
-        return JSONResponse({"error": "Invalid session"}, status_code=400)
+    try:
+        # Get session
+        if not session_id or session_id not in game_sessions:
+            return JSONResponse({"error": "Invalid session"}, status_code=400)
 
-    session = game_sessions[session_id]
-    shuffled_positions = session.get("shuffled_positions")
-    patches_list = session.get("patches")
+        session = game_sessions[session_id]
+        shuffled_positions = session.get("shuffled_positions")
+        patches_list = session.get("patches")
 
-    # Ensure valid data exists for swapping
-    if shuffled_positions is None or patches_list is None:
-        return JSONResponse({"error": "No puzzle to swap"}, status_code=400)
+        # Ensure valid data exists for swapping
+        if shuffled_positions is None or patches_list is None:
+            return JSONResponse({"error": "No puzzle to swap"}, status_code=400)
 
-    # Convert patches back to numpy array
-    patches = np.array(patches_list)
+        # Convert patches back to numpy array
+        patches = np.array(patches_list)
 
-    # Set patch size dynamically based on config
-    grid_size = get_grid_size()
-    patch_size = 512 // grid_size
-    # Validate indices
-    total_patches = len(shuffled_positions)
-    if index1 < 0 or index2 < 0 or index1 >= total_patches or index2 >= total_patches:
-        return JSONResponse({"error": "Invalid indices"}, status_code=400)
+        # Set patch size dynamically based on config
+        grid_size = get_grid_size()
+        patch_size = 512 // grid_size
+        # Validate indices
+        total_patches = len(shuffled_positions)
+        if index1 < 0 or index2 < 0 or index1 >= total_patches or index2 >= total_patches:
+            return JSONResponse({"error": "Invalid indices"}, status_code=400)
 
-    # Debugging output
-    print(f"Before swap: {shuffled_positions}")
-    print(f"Swapping patches: {index1} <-> {index2}")
+        # Debugging output
+        print(f"Before swap: {shuffled_positions}")
+        print(f"Swapping patches: {index1} <-> {index2}")
 
-    # Swap positions in the shuffled list
-    shuffled_positions[index1], shuffled_positions[index2] = shuffled_positions[index2], shuffled_positions[index1]
-    session["shuffled_positions"] = shuffled_positions
+        # Swap positions in the shuffled list
+        shuffled_positions[index1], shuffled_positions[index2] = shuffled_positions[index2], shuffled_positions[index1]
+        session["shuffled_positions"] = shuffled_positions
 
-    # Debugging output
-    print(f"After swap: {shuffled_positions}")
+        # Debugging output
+        print(f"After swap: {shuffled_positions}")
 
-    # Reconstruct the updated image based on the new shuffled positions
-    target_size = patch_size * grid_size
-    updated_image = np.zeros((target_size, target_size), dtype=np.uint8)  # Grayscale image
+        # Reconstruct the updated image based on the new shuffled positions
+        target_size = patch_size * grid_size
+        updated_image = np.zeros((target_size, target_size), dtype=np.uint8)  # Grayscale image
 
-    index = 0
-    for i in range(0, target_size, patch_size):
-        for j in range(0, target_size, patch_size):
-            patch = patches[shuffled_positions[index]]
+        index = 0
+        for i in range(0, target_size, patch_size):
+            for j in range(0, target_size, patch_size):
+                patch = patches[shuffled_positions[index]]
 
-            # Ensure patch size matches the calculated patch size
-            if patch.shape != (patch_size, patch_size):
-                raise ValueError(
-                    f"Patch at index {index} has invalid dimensions: {patch.shape}. Expected: ({patch_size}, {patch_size})"
-                )
+                # Ensure patch size matches the calculated patch size
+                if patch.shape != (patch_size, patch_size):
+                    raise ValueError(
+                        f"Patch at index {index} has invalid dimensions: {patch.shape}. Expected: ({patch_size}, {patch_size})"
+                    )
 
-            updated_image[i:i + patch_size, j:j + patch_size] = patch
-            index += 1
+                updated_image[i:i + patch_size, j:j + patch_size] = patch
+                index += 1
 
-    # Save the updated image with unique name per session, level, and timestamp in temp folder
-    timestamp = int(time.time() * 1000)
-    updated_image_path = f"app/static/images/temp/updated_{session_id[:8]}_{session['current_level']}_{timestamp}.jpg"
-    Image.fromarray(updated_image).save(updated_image_path)
+        # Ensure temp directory exists
+        temp_dir = "app/static/images/temp"
+        os.makedirs(temp_dir, exist_ok=True)
 
-    # Update session to track the latest image
-    session["current_shuffled_image_path"] = updated_image_path
+        # Save the updated image with unique name per session, level, and timestamp in temp folder
+        timestamp = int(time.time() * 1000)
+        updated_image_path = f"app/static/images/temp/updated_{session_id[:8]}_{session['current_level']}_{timestamp}.jpg"
 
-    return JSONResponse({"updated_image_url": f"/static/images/temp/updated_{session_id[:8]}_{session['current_level']}_{timestamp}.jpg"})
+        print(f"Saving updated image to: {updated_image_path}")
+        Image.fromarray(updated_image).save(updated_image_path)
+
+        # Verify file was created
+        if os.path.exists(updated_image_path):
+            print(f"✓ Updated image created successfully")
+        else:
+            print(f"✗ ERROR: Failed to create updated image")
+            return JSONResponse({"error": "Failed to create updated image"}, status_code=500)
+
+        # Update session to track the latest image
+        session["current_shuffled_image_path"] = updated_image_path
+
+        updated_url = f"/static/images/temp/updated_{session_id[:8]}_{session['current_level']}_{timestamp}.jpg"
+        print(f"Returning updated image URL: {updated_url}")
+
+        return JSONResponse({"updated_image_url": updated_url})
+
+    except Exception as e:
+        print(f"✗ ERROR in swap_patches: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return JSONResponse({"error": f"Swap failed: {str(e)}"}, status_code=500)
 
 
 
@@ -454,8 +516,13 @@ def next_level(session_id: Optional[str] = Header(None, alias="X-Session-ID")):
     
 
 @app.on_event("startup")
-def ensure_player_data_file():
-    """Ensure the player_data.json file exists at startup."""
+def ensure_directories():
+    """Ensure required directories exist at startup."""
+    # Ensure temp images directory exists
+    temp_dir = "app/static/images/temp"
+    os.makedirs(temp_dir, exist_ok=True)
+
+    # Ensure player_data.json file exists (legacy support)
     player_data_path = "app/data/player_data.json"
     if not os.path.exists(player_data_path):
         with open(player_data_path, "w") as f:

@@ -2,14 +2,20 @@
 Database operations for the eHealth Puzzle Game
 """
 import sqlite3
+import os
 from datetime import datetime
 from typing import Optional, List, Dict, Tuple
+from pathlib import Path
 
 DATABASE_FILE = "app/db/game.db"
 
 
 def init_db():
     """Initialize the SQLite database with required tables."""
+    # Ensure the database directory exists
+    db_dir = Path(DATABASE_FILE).parent
+    db_dir.mkdir(parents=True, exist_ok=True)
+
     connection = sqlite3.connect(DATABASE_FILE)
     cursor = connection.cursor()
 

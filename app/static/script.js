@@ -18,20 +18,39 @@ function setSessionId(sessionId) {
 }
 
 async function fetchWithSession(url, options = {}) {
-    const sessionId = getSessionId();
-    options.headers = options.headers || {};
-    if (sessionId) {
-        options.headers['X-Session-ID'] = sessionId;
+    try {
+        const sessionId = getSessionId();
+        console.log(`[fetchWithSession] Calling ${url} with session:`, sessionId ? sessionId.substring(0, 8) + '...' : 'none');
+
+        options.headers = options.headers || {};
+        if (sessionId) {
+            options.headers['X-Session-ID'] = sessionId;
+        }
+
+        const response = await fetch(url, options);
+        console.log(`[fetchWithSession] ${url} response status:`, response.status);
+
+        // Try to parse JSON regardless of status
+        let data;
+        try {
+            data = await response.json();
+        } catch (parseError) {
+            console.error(`[fetchWithSession] Failed to parse JSON from ${url}:`, parseError);
+            const text = await response.text();
+            console.error(`[fetchWithSession] Response text:`, text);
+            throw new Error(`Invalid JSON response from server`);
+        }
+
+        if (data.session_id) {
+            setSessionId(data.session_id);
+        }
+
+        return { response, data };
+    } catch (error) {
+        console.error(`[fetchWithSession] Error for ${url}:`, error);
+        console.error(`[fetchWithSession] Error stack:`, error.stack);
+        throw error; // Re-throw so caller can handle it
     }
-
-    const response = await fetch(url, options);
-    const data = await response.json();
-
-    if (data.session_id) {
-        setSessionId(data.session_id);
-    }
-
-    return { response, data };
 }
 
 // ===== GAME INITIALIZATION =====
@@ -215,61 +234,103 @@ function startCountdown(seconds, callback) {
         } else {
             clearInterval(interval);
             overlay.style.display = "none";
-            if (callback) callback();
+            if (callback) {
+                try {
+                    // Handle both sync and async callbacks
+                    const result = callback();
+                    if (result instanceof Promise) {
+                        result.catch(err => {
+                            console.error("Error in countdown callback:", err);
+                            alert(`An error occurred: ${err.message}`);
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error in countdown callback:", error);
+                    alert(`An error occurred: ${error.message}`);
+                }
+            }
         }
     }, 1000);
 }
 
 // ===== PUZZLE LOGIC =====
 async function loadImage() {
-    const { response, data } = await fetchWithSession('/image');
+    try {
+        console.log("Loading image...");
+        const { response, data } = await fetchWithSession('/image');
 
-    if (response.ok) {
-        const img = document.getElementById("puzzle-image");
-        img.src = data.image_url;
-        img.style.display = "block";
-        img.onclick = null; // Disable clicks initially
-        img.style.cursor = "default";
-        img.style.border = "none";
+        if (response.ok) {
+            console.log("Image loaded successfully:", data.image_url);
+            const img = document.getElementById("puzzle-image");
+            img.src = data.image_url;
+            img.style.display = "block";
+            img.onclick = null; // Disable clicks initially
+            img.style.cursor = "default";
+            img.style.border = "none";
 
-        // Metadata
-        const meta = document.getElementById("metadata");
-        if (data.metadata) {
-            meta.textContent = `${data.metadata.organ} • ${data.metadata.modality}`;
-            // Open relevant hint
-            openModalityHint(data.metadata.modality);
-        }
+            // Metadata
+            const meta = document.getElementById("metadata");
+            if (data.metadata) {
+                meta.textContent = `${data.metadata.organ} • ${data.metadata.modality}`;
+                // Open relevant hint
+                openModalityHint(data.metadata.modality);
+            }
 
-        // Load questions correctly
-        loadQuestions();
+            // Load questions correctly
+            loadQuestions();
 
-        // Start visible countdown
-        startCountdown(countdownTime, shuffleImage);
-    } else {
-        if (data.error && data.error.includes("No images")) {
-            alert("Level complete!");
+            // Start visible countdown
+            console.log(`Starting countdown (${countdownTime} seconds) before shuffle`);
+            startCountdown(countdownTime, shuffleImage);
         } else {
-            console.error(data.error);
+            if (data.error && data.error.includes("No images")) {
+                alert("Level complete!");
+            } else {
+                console.error("Load image failed:", data.error);
+                alert(`Failed to load image: ${data.error || 'Unknown error'}`);
+            }
         }
+    } catch (error) {
+        console.error("Error during loadImage:", error);
+        alert(`Failed to load image: ${error.message}. Please refresh the page.`);
     }
 }
 
 async function shuffleImage() {
-    const { response, data } = await fetchWithSession('/shuffle', { method: 'POST' });
-    if (response.ok) {
-        const img = document.getElementById("puzzle-image");
-        img.src = data.shuffled_image_url + "?t=" + new Date().getTime();
-        currentGridSize = data.grid_size || 4;
+    try {
+        console.log("Starting shuffle...");
+        const { response, data } = await fetchWithSession('/shuffle', { method: 'POST' });
 
-        document.getElementById("validate-button").classList.remove("hidden");
+        if (response.ok) {
+            console.log("Shuffle successful, loading image:", data.shuffled_image_url);
+            const img = document.getElementById("puzzle-image");
+            img.src = data.shuffled_image_url + "?t=" + new Date().getTime();
+            currentGridSize = data.grid_size || 4;
 
-        // Enable swapping
-        img.style.cursor = "pointer";
-        img.onclick = handleImageClick;
-        img.style.border = "2px solid #34495e";
-    } else {
-        console.error("Shuffle failed:", data);
-        alert("Failed to shuffle puzzle. Please try restarting the level.");
+            document.getElementById("validate-button").classList.remove("hidden");
+
+            // Enable swapping
+            img.style.cursor = "pointer";
+            img.onclick = handleImageClick;
+            img.style.border = "2px solid #34495e";
+        } else {
+            console.error("Shuffle failed:", data);
+
+            // Check if session expired
+            if (data.session_expired) {
+                console.log("Session expired, reloading image to get new session...");
+                alert("Your session expired. Reloading the game...");
+                // Clear the old session and reload
+                sessionStorage.removeItem('game_session_id');
+                await loadImage();
+                return;
+            }
+
+            alert(`Failed to shuffle puzzle: ${data.error || 'Unknown error'}. Please try restarting the level.`);
+        }
+    } catch (error) {
+        console.error("Error during shuffle:", error);
+        alert(`Failed to shuffle puzzle: ${error.message}. Please refresh the page.`);
     }
 }
 
@@ -340,9 +401,17 @@ function closeModal(id) {
 
 // ===== QUIZ LOGIC =====
 async function loadQuestions() {
-    const { response, data } = await fetchWithSession('/questions');
-    if (response.ok) {
-        renderQuestions(data.questions);
+    try {
+        const { response, data } = await fetchWithSession('/questions');
+        if (response.ok) {
+            renderQuestions(data.questions);
+        } else {
+            console.error("Failed to load questions:", data.error);
+            renderQuestions([]); // Show empty questions
+        }
+    } catch (error) {
+        console.error("Error loading questions:", error);
+        renderQuestions([]); // Show empty questions
     }
 }
 
