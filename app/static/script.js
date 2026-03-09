@@ -79,7 +79,10 @@ function startGame() {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username: playerId }),
     })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error(`Server error: ${res.status}`);
+            return res.json();
+        })
         .then(data => {
             if (data.error) {
                 showError(data.error);
@@ -102,7 +105,7 @@ function startGame() {
                 startTimer();
             }
         })
-        .catch(() => showError("Connection failed."));
+        .catch(err => showError(err.message || "Connection failed."));
 }
 
 function showError(msg) {

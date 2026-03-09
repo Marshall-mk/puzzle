@@ -33,11 +33,18 @@ from app.src.sessions import (
     game_sessions
 )
 
+def get_real_ip(request: Request) -> str:
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        return forwarded_for.split(",")[0].strip()
+    return request.client.host if request.client else "127.0.0.1"
+
+
 # Creating API object
 app = FastAPI()
 
 # Rate limiting setup
-limiter = Limiter(key_func=get_remote_address)
+limiter = Limiter(key_func=get_real_ip)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -99,6 +106,7 @@ def cleanup_temp_images(max_age_hours: int = 24):
 
 # Define the root url
 @app.get("/")
+@app.head("/")
 def serve_html():
     """Serve the main HTML file."""
     return FileResponse("app/static/index.html")
