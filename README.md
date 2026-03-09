@@ -21,6 +21,21 @@ uvicorn app.src.main:app --host 0.0.0.0 --port 8000 --reload
 
 ## ⚙️ Configuration
 
+### Number of Image Crops (Grid Size)
+
+The image is split into an N×N grid of pieces. To change it, edit `app/data/config.json`:
+
+```json
+{
+    "grid_size": 3
+}
+```
+
+A value of `3` produces a 3×3 grid (9 pieces). Valid range is 2–10.
+The default fallback (if the file is missing) is `4`, defined in `app/src/config.py:8`.
+
+---
+
 ### Game Timings
 - **Shuffle countdown**: 6 seconds
   - Location: `app/static/index.html:807`
@@ -37,6 +52,22 @@ uvicorn app.src.main:app --host 0.0.0.0 --port 8000 --reload
 
 - **Database location**: `app/db/game.db`
 - **Data files**: `app/data/` (questions.json, player_data.json, winners.json)
+
+### Resetting the Database
+
+Delete the database file and restart the app — it will be recreated automatically:
+
+```bash
+rm app/db/game.db
+```
+
+To also clear legacy JSON data:
+
+```bash
+rm app/db/game.db
+echo '[]' > app/data/player_data.json
+echo '[]' > app/data/winners.json
+```
 
 ### Admin Settings
 - **Admin password**: Set via `ADMIN_PASSWORD` environment variable

@@ -214,6 +214,7 @@ function openModalityHint(modality) {
     const lower = modality.toLowerCase();
 
     if (lower.includes("mri")) toggleModality('mri');
+    else if (lower.includes("pet")) toggleModality('pet');
     else if (lower.includes("ct")) toggleModality('ct');
     else if (lower.includes("x-ray") || lower.includes("xray")) toggleModality('xray');
     else if (lower.includes("ultrasound")) toggleModality('ultrasound');

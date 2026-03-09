@@ -17,8 +17,8 @@
         <div class="header-content">
             <img src="static/images/logos/logo-left.png" alt="Logo" class="header-logo">
             <div class="header-text">
-                <h1>Puzzle Game</h1>
-                <p>Challenge your brain and learn about health!</p>
+                <h1>Imaging Explained: Your Body Through Different Lenses</h1>
+                <p>Learn why one scan doesn’t fit all!</p>
             </div>
             <img src="static/images/logos/logo-right.png" alt="Logo" class="header-logo">
         </div>
@@ -45,35 +45,77 @@
         <aside id="sidebar" class="glass-panel hidden">
             <h3 style="padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); margin: 0;">Learning Hub</h3>
             <div id="modality-menu">
-                <!-- Dropdowns will be injected here -->
                 <div class="modality-menu">
-                    <button class="modality-toggle" onclick="toggleModality('mri')">MRI <span>▼</span></button>
-                    <div id="mri-content" class="modality-content">
-                        Magnetic Resonance Imaging (MRI) uses strong magnetic fields and radio waves to generate images
-                        of the organs in the body. It does not use ionizing radiation.
+                    <button class="modality-toggle" onclick="toggleModality('xray')">X-Ray <span>▼</span></button>
+                    <div id="xray-content" class="modality-content">
+                        <p><strong>What it is:</strong> X-rays use a small amount of ionizing radiation to create pictures of the inside of the body. Dense structures (like bone) show up white; softer tissues appear darker.</p>
+                        <p><strong>Best for:</strong></p>
+                        <ul>
+                            <li>Bones: fractures, dislocations, spine problems</li>
+                            <li>Chest: lung infections (e.g., pneumonia), heart size</li>
+                            <li>Teeth: dental evaluation</li>
+                        </ul>
+                        <p><strong>Why clinicians choose it:</strong> Fast, cheap, widely available, and great for bone &amp; chest screening.</p>
+                        <p><strong>Age note:</strong> Children are more sensitive to radiation, so X-rays are used only when necessary and with minimized dose.</p>
+                    </div>
+                </div>
+                <div class="modality-menu">
+                    <button class="modality-toggle" onclick="toggleModality('ultrasound')">Ultrasound <span>▼</span></button>
+                    <div id="ultrasound-content" class="modality-content">
+                        <p><strong>What it is:</strong> Ultrasound uses high-frequency sound waves, not radiation. A handheld probe sends sound into the body and measures echoes to form images.</p>
+                        <p><strong>Best for:</strong></p>
+                        <ul>
+                            <li>Pregnancy imaging</li>
+                            <li>Abdomen: liver, gallbladder, kidneys</li>
+                            <li>Pelvis: uterus, ovaries, prostate</li>
+                            <li>Blood flow: using Doppler</li>
+                        </ul>
+                        <p><strong>Why clinicians choose it:</strong> Safe for all ages including babies and pregnant individuals, real-time imaging, great for soft tissues and fluid-filled organs.</p>
+                        <p><strong>Age note:</strong> Preferred for young patients because it avoids radiation.</p>
                     </div>
                 </div>
                 <div class="modality-menu">
                     <button class="modality-toggle" onclick="toggleModality('ct')">CT Scan <span>▼</span></button>
                     <div id="ct-content" class="modality-content">
-                        Computed Tomography (CT) combines a series of X-ray images taken from different angles around
-                        your body and uses computer processing to create cross-sectional images (slices).
+                        <p><strong>What it is:</strong> A CT scanner uses rotating X-rays and computer processing to create 3D images of the body.</p>
+                        <p><strong>Best for:</strong></p>
+                        <ul>
+                            <li>Emergency cases: trauma, internal bleeding</li>
+                            <li>Chest &amp; abdomen: tumors, infections</li>
+                            <li>Bones and spine</li>
+                            <li>Lungs: pulmonary embolism, nodules</li>
+                        </ul>
+                        <p><strong>Why clinicians choose it:</strong> Very fast, clear 3D detail, and excellent for detecting emergencies.</p>
+                        <p><strong>Age note:</strong> Use cautiously in children due to higher radiation. Benefit must outweigh risk.</p>
                     </div>
                 </div>
                 <div class="modality-menu">
-                    <button class="modality-toggle" onclick="toggleModality('xray')">X-Ray <span>▼</span></button>
-                    <div id="xray-content" class="modality-content">
-                        X-rays are a form of electromagnetic radiation. They create images of the inside of your body.
-                        The images show the parts of your body in different shades of black and white.
+                    <button class="modality-toggle" onclick="toggleModality('mri')">MRI <span>▼</span></button>
+                    <div id="mri-content" class="modality-content">
+                        <p><strong>What it is:</strong> MRI uses strong magnets and radio waves—no radiation—to create very detailed images of soft tissues.</p>
+                        <p><strong>Best for:</strong></p>
+                        <ul>
+                            <li>Brain &amp; spinal cord</li>
+                            <li>Joints: knees, shoulders, ligaments, cartilage</li>
+                            <li>Heart and vessels</li>
+                            <li>Tumors &amp; soft tissue diseases</li>
+                        </ul>
+                        <p><strong>Why clinicians choose it:</strong> Exceptional soft-tissue contrast, no radiation, and ideal for neurological and musculoskeletal imaging.</p>
+                        <p><strong>Age note:</strong> No radiation risk, but long scan times require staying still — younger children may need sedation.</p>
                     </div>
                 </div>
                 <div class="modality-menu">
-                    <button class="modality-toggle" onclick="toggleModality('ultrasound')">Ultrasound
-                        <span>▼</span></button>
-                    <div id="ultrasound-content" class="modality-content">
-                        Ultrasound imaging uses high-frequency sound waves to view inside the body. Because ultrasound
-                        images are captured in real-time, they can show the structure and movement of the body's
-                        internal organs.
+                    <button class="modality-toggle" onclick="toggleModality('pet')">PET / PET-CT <span>▼</span></button>
+                    <div id="pet-content" class="modality-content">
+                        <p><strong>What it is:</strong> PET uses a radioactive tracer to show how tissues use energy. Often paired with CT or MRI (e.g., PET-CT).</p>
+                        <p><strong>Best for:</strong></p>
+                        <ul>
+                            <li>Cancer detection and treatment monitoring</li>
+                            <li>Brain metabolism: dementia, epilepsy</li>
+                            <li>Heart perfusion</li>
+                        </ul>
+                        <p><strong>Why clinicians choose it:</strong> Shows function, not just structure; detects disease activity early; excellent for staging cancer.</p>
+                        <p><strong>Age note:</strong> Used mainly in adults unless clinically essential, due to radiation from tracer + CT.</p>
                     </div>
                 </div>
             </div>

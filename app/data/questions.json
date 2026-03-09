@@ -28,9 +28,9 @@
       "modality": "MRI",
       "questions": [
         {
-          "question": "Which region of the brain is shown?",
-          "options": ["Frontal Lobe", "Parietal Lobe", "Cerebellum"],
-          "answer": "Cerebellum"
+          "question": "What does MRI use to form images?",
+          "options": ["Strong magnets and radio waves", "X-Ray", "Sound waves"],
+          "answer": "Strong magnets and radio waves"
         },
         {
           "question": "Which imaging modality is used?",
@@ -38,9 +38,9 @@
           "answer": "MRI"
         },
         {
-          "question": "What is the primary function of this region?",
-          "options": ["Motor coordination", "Visual processing", "Memory storage"],
-          "answer": "Motor coordination"
+          "question": "What is one drawback of MRI?",
+          "options": ["It cannot image soft tissues clearly", "It uses radiation", "It takes a long time and requires stillness"],
+          "answer": "It takes a long time and requires stillness"
         }
       ]
     },
@@ -105,8 +105,8 @@
         "answer": "MRI"
       },
       {
-        "question": "What is a common cause of herniated discs?",
-        "options": ["Age-related degeneration", "Infection", "High blood pressure"],
+        "question": "What is a common cause of spinal degeneration in older adults?",
+        "options": ["Age-related degeneration", "Infection", "Trauma"],
         "answer": "Age-related degeneration"
       }
     ]
@@ -133,14 +133,9 @@
         "answer": "CT"
       },
       {
-        "question": "Which tracer is commonly used in PET scans?",
-        "options": ["Fluorodeoxyglucose (FDG)", "Iodine-131", "Technetium-99m"],
-        "answer": "Fluorodeoxyglucose (FDG)"
-      },
-      {
-        "question": "What is the primary purpose of CT in PET-CT imaging?",
-        "options": ["Anatomical localization", "Detecting functional changes", "Measuring oxygenation"],
-        "answer": "Anatomical localization"
+        "question": "Which modality provides functional information in PET-CT?",
+        "options": ["CT", "PET", "Both"],
+        "answer": "PET"
       }
     ]
   }
